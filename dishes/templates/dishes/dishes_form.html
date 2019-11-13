@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+<h1>Dishes</h1>
+<ul>
+    <form method="POST" class="post-form">{% csrf_token %}
+    {{form.as_p}}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+
+</ul>
+<a href  = "/ingredients"> Ingredient</a>
+<a href  = "/dishes"> Dishes</a>
+<a href  = "/drinks"> Drinks</a>
+<a href  = '/'> Start </a>
+</html>

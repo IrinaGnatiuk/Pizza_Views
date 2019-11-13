@@ -1,0 +1,11 @@
+<h1>INGREDIENTS</h1>
+<h3>{{ my_var }}</h3>
+<ul>
+{% for ingredient in object_list %}
+    <li>{{ ingredient.name }} ---- {{ ingredient.price }}</li>
+    <td><a href="{{ingredient.id}}/edit/">Изменить</a> </td>
+{% empty %}
+    <li>No drinks yet.</li>
+{% endfor %}
+    <a href  = "/ingredients/new"> ДОБАВИТЬ</a>
+</ul>
