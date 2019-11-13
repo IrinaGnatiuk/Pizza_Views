@@ -26,12 +26,12 @@ class Ingredient(models.Model):
 class Dish(BaseItem):
     ingredients = models.ManyToManyField(Ingredient, blank=True)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name = 'Блюдо'
         verbose_name_plural = 'Блюда'
-
-    def __str__(self):
-        return self.name
 
 
 class Drink(BaseItem):
