@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{%extends "base.html"%}
+{%block main%}
+<html lang="ru">
+<h1>Price</h1>
+<ul>
+    <form method="POST" class="post-form">{% csrf_token %}
+    {{form.as_p}}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+
+</ul>
+<a href  = "/price/update_price"> Повысить цену</a>
+<a href  = '/'> Start </a>
+</html>
+{%endblock%}

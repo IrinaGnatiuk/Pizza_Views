@@ -1,8 +1,15 @@
 {%extends "base.html"%}
 {%block main%}
 <h1>DISHES</h1>
+<h2>количество блюд {{count_dish}}</h2>
 <h3>{{ my_var|lower }}</h3>
+<h2> 1) Values :{{list_dish1}}</h2>
+<h2> 2) Values_list :{{list_dish2}}</h2>
+<h3> цена больше 200{{filter200}}</h3>
+<h3> цена больше 50 {{filter50}}</h3>
 {% block head_title %}Dishes List{% endblock %}
+<hr>
+<em><a href  = "/dishes/new"> ДОБАВИТЬ БЛЮДО</a></em></br>
 <hr>
 <ol>
 {% for dish in object_list %}
@@ -12,8 +19,10 @@
     <li>No  yet.</li>
     {% endfor %}
 </ol>
-    <a href  = "/dishes"> Dishes view</a>
-<em><a href  = "/dishes/new"> ДОБАВИТЬ</a></em>
+ <a href  = "/dishes"> Dishes view</a></br>
+
+<strong> <a href  = "/price"> Изменить цену</a></strong></br>
+<strong> <a href  = "/sort"> Cортировка </a></strong></br>
 <p>
     <hr>
     {% if object_list %}
