@@ -41,3 +41,17 @@ class Drink(BaseItem):
     class Meta:
         verbose_name = 'Напиток'
         verbose_name_plural = 'Напитки'
+
+
+class ChangePrice(models.Model):
+    change_price = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+
+
+class SortDish(models.Model):
+    FILTER_TYPES = (
+        ('price+', 'price по возрастанию'),
+        ('price-', 'price по убыванию'),
+        ('name+', 'name по возрастанию'),
+        ('name-', 'name убыванию'),
+    )
+    sort = models.CharField(max_length=15, choices=FILTER_TYPES, default='price +')

@@ -1,5 +1,5 @@
-from django.forms import ModelForm
-from dishes.models import Ingredient, Drink, Dish
+from django.forms import ModelForm, Form
+from dishes.models import Ingredient, Drink, Dish, SortDish
 from django import forms
 
 
@@ -22,3 +22,18 @@ class DishForm(ModelForm):
     class Meta:
         model = Dish
         fields = ['name', 'price']
+
+
+class ChangePriceForm(Form):
+    change_price = forms.DecimalField(required=True, max_digits=2)
+
+
+class SortForm(ModelForm):
+    class Meta:
+        model = SortDish
+        fields = ['sort']
+
+
+
+
+

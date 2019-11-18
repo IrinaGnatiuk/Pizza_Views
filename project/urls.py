@@ -12,7 +12,6 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('', include('core.urls')),
     path('', include('dishes.urls')),
-
 ]
 
 if settings.DEBUG:
