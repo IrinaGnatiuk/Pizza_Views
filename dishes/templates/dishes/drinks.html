@@ -1,11 +1,9 @@
+{%extends "base.html"%}
+{%block main%}
 <h1>DRINKS</h1>
-<h3>{{ my_var }}</h3>
-<ul>
-{% for drink in object_list %}
-    <li>{{ drink.name }} ---- {{ drink.price }}</li>
-    <td><a href="{{drink.id}}/edit/">Изменить</a> </td>
-{% empty %}
-    <li>No drinks yet.</li>
-{% endfor %}
-    <a href  = "/drinks/new"> ДОБАВИТЬ</a>
-</ul>
+{% block head_title %}Drinks{% endblock %}
+<h3>{{ my_var|upper }}</h3>
+<hr>
+<strong><em><a href  = "/drinks/new"> ДОБАВИТЬ</a></em></strong>
+ <a href  = "/drinks"> Список напитков</a>
+{%endblock%}

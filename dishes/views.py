@@ -20,7 +20,7 @@ class DishView(TemplateView):
 
 class DrinkView(ListView):
     model = Drink
-    template_name = 'dishes/drinks.html'
+    template_name = 'dishes/drinks_list.html'
     queryset = Drink.objects.order_by("name")
     context_object_name = 'drink'
 
@@ -35,7 +35,7 @@ class DrinkView(ListView):
 
 class DishViewList(ListView):
     model = Dish
-    template_name = 'dishes/dishes.html'
+    template_name = 'dishes/dishes_list.html'
     queryset = Dish.objects.order_by("name")
     context_object_name = 'dishes'
 
@@ -109,6 +109,10 @@ class MakeDishes(FormView):
     template_name = 'dishes/dishes_form.html'
     success_url = '/'
     form_class = DishForm
+
+    def form_valid(self, form_class):
+        Dish.objects.create(**form_class.cleaned_data)
+        return super().form_valid(form_class)
 
 
 class UpdateDrink(UpdateView):

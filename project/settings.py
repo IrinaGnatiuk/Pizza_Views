@@ -7,7 +7,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = 'gn9h&f26i%0)if$&^a7yx%fn$m!9=8%rc=b$ujnyjjon$ood3_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*', ]
 INTERNAL_IPS = ['127.0.0.1', ]
 
@@ -16,6 +16,8 @@ SITE_NAME = 'Django site'
 NO_REPLY_EMAIL_ADDRESS = 'no-reply@example.com'
 ADMIN_EMAIL_ADDRESS = 'admin@example.com'
 SUPPORT_EMAIL_ADDRESS = 'support@example.com'
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = 'tmp/email-messages/'
 
 SWITCH_HASH_KEY = 'user_switch'
 
@@ -26,9 +28,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.conf',
+    'import_export',
     'debug_toolbar',
     'core',
     'accounts',
+    'dishes',
+    'order',
 ]
 
 MIDDLEWARE = [

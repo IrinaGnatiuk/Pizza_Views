@@ -1,9 +1,10 @@
-<<h1>INGREDIENTS</h1>
+{%extends "base.html"%}
+{%block main%}
+<h1>INGREDIENTS</h1>
+{% block head_title %}Ingredients{% endblock %}
 
-<div>
-    <p>Ingredients</p>
-     </div>
     <ul>
-    <a href  = "/ingredients/list"> Ingredient list</a>
-    <a href  = "/ingredients/new"> ДОБАВИТЬ</a>
+    <a href  = "/ingredients/list"> Список ингредиентов</a>
+        <strong><em> <a href  = "/ingredients/new"> ДОБАВИТЬ</a></em></strong>
     </ul>
+{%endblock%}

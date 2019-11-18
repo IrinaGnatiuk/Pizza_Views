@@ -1,0 +1,26 @@
+{%extends "base.html"%}
+{%block main%}
+<h1>DRINKS</h1>
+<h3>{{ my_var|upper }}</h3>
+{% block head_title %}Drinks List{% endblock %}
+<hr>
+<ul>
+{% for drink in object_list %}
+    <li>{{ drink.name | title }} ---- {{ drink.price }}</li>
+    <td><a href="{{drink.id}}/edit/">Изменить</a> </td>
+{% empty %}
+    <li>No drinks yet.</li>
+{% endfor %}
+
+</ul>
+<em><a href  = "/drinks/new"> ДОБАВИТЬ</a></em>
+
+<p>
+    <hr>
+    {% if object_list %}
+  <strong>  Количество напитков: {{ object_list|length }}</strong>
+    {% else %}
+    Нет напитков.
+{% endif %}
+</p>
+{%endblock%}
