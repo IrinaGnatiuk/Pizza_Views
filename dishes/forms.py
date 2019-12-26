@@ -1,5 +1,5 @@
 from django.forms import ModelForm, Form
-from dishes.models import Ingredient, Drink, Dish, SortDish
+from dishes.models import Ingredient, Drink, Dish, SortDish, InstanceDish
 from django import forms
 
 
@@ -34,6 +34,10 @@ class SortForm(ModelForm):
         fields = ['sort']
 
 
+class AddDishForm(Form):
+    dish_id = forms.IntegerField()
+    count = forms.IntegerField()
 
 
-
+class CountForm(Form):
+    count = forms.IntegerField()

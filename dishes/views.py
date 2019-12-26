@@ -1,21 +1,28 @@
 from django.shortcuts import render
+from rest_framework import routers, serializers, viewsets
 from django.views.generic import ListView, View, TemplateView
 from django.views.generic.edit import FormView, UpdateView
-from dishes.models import Dish, Drink, Ingredient, ChangePrice, SortDish
-from django.http import HttpResponse
-from .forms import IngredientForm, DrinkForm, DishForm, ChangePriceForm, SortForm
+from dishes.models import *
+from order.models import Order
+from django.http import HttpResponse, HttpResponseRedirect
+from .forms import *
+from .serialisers import *
 
 
-class DishView(TemplateView):
-    model = Dish
-    context_object_name = 'dish'
+class InstanceDishView(ListView):
+    model = InstanceDish
+    context_object_name = 'instance_dish'
     template_name = 'dishes/dishes.html'
     success_url = '/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['my_var'] = 'DishTemplateView'
+        context['list_instance_dish'] = \
+            InstanceDish.objects.values().order_by('name')
         return context
+
+    def get_quertyset(self, *args, **kwargs):
+        return InstanceDish.objects.all()
 
 
 class DrinkView(ListView):
@@ -38,13 +45,12 @@ class DishViewList(ListView):
     template_name = 'dishes/dishes_list.html'
     context_object_name = 'dishes'
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['my_var'] = 'DishesListView'
         context['count_dish'] = Dish.objects.count()
         context['list_dish1'] = Dish.objects.values('price').order_by('price')
-        context['list_dish2'] = Dish.objects.values_list('name',flat=True).order_by('price')
+        context['list_dish2'] = Dish.objects.values_list('name', flat=True).order_by('price')
         context['filter200'] = Dish.objects.filter(price__gt = 200)
         context['filter50'] = Dish.objects.filter(price__gt=50)
         return context
@@ -109,7 +115,7 @@ class MakeDrink(FormView):
 class MakeDishes(FormView):
     model = Dish
     template_name = 'dishes/dishes_form.html'
-    success_url = '/'
+    success_url = '/dishes/list'
     form_class = DishForm
 
     def form_valid(self, form_class):
@@ -135,7 +141,7 @@ class UpdateDish(UpdateView):
     form_class = DishForm
     model = Dish
     template_name = 'dishes/dishes_form.html'
-    success_url = '/'
+    success_url = '/dishes/list'
 
 
 class CreateNewPrice(FormView):
@@ -167,12 +173,65 @@ class MakeSort(FormView):
         data = form_class.cleaned_data
         sort = data['sort']
         print(sort)
-        if sort == 'price+':
-            DishViewList.queryset = Dish.objects.all().order_by('price')
-        elif sort == 'price-':
-            DishViewList.queryset = Dish.objects.all().order_by('-price')
-        elif sort == 'name+':
-            DishViewList.queryset = Dish.objects.all().order_by('name')
-        else:
-            DishViewList.queryset = Dish.objects.all().order_by('-name')
+        DishViewList.queryset = Dish.objects.all().order_by(sort)
         return super().form_valid(form_class)
+
+
+class AddDelDish(FormView):
+    form_class = AddDishForm
+    template_name = 'dishes/dishes_add_form.html'
+    success_url = '/order/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['list_dish'] = Dish.objects.all()
+        context['list_instance_dish'] = InstanceDish.objects.all()
+        return context
+
+    def get_queryset(self, *args, **kwargs):
+        return Dish.objects.all()
+
+    def form_valid(self, form):
+        dish = Dish.objects.get(id =form.cleaned_data.get('dish_id'))
+        count = form.cleaned_data.get('count')
+        instance_dish = dish.create_instance_dish(count)
+        order, created = Order.objects.get_or_create(user=self.request.user)
+        order.dishes.add(instance_dish)
+        order.get_full_price()
+        return super().form_valid(form)
+
+    # def edit_count_dish_in_order(request,pk):
+    #     order = Order.objects.first()
+    #     dish = order.dishes.get(id =pk)
+    #     print(dish.count)
+    #     print(request.POST.get('count'))
+    #     # dish.count = count
+    #     print ("{}".format(dish.count))
+    #     order.get_full_price()
+    #     return HttpResponseRedirect("/order")
+
+class CountDish(FormView):
+    form_class = CountForm
+    template_name = 'dishes/dishes_add_form.html'
+    success_url = '/order/'
+
+    def form_valid(self, form):
+        dish = Dish.objects.get(id =form.cleaned_data.get('dish_id'))
+        print (dish.count)
+        new_count = form.cleaned_data.get('count')
+        print (new_count)
+        instance_dish = dish.update(new_count)
+        order= Order.objects.get(user=self.request.user)
+        order.dishes.update(instance_dish)
+        order.get_full_price()
+        return super().form_valid(form)
+
+class DishViewSet(viewsets.ModelViewSet):
+    queryset = Dish.objects.all()
+    serializer_class = DishSerializer
+
+
+
+
+
+

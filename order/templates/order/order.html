@@ -1,5 +1,46 @@
-<<h1>TemplateView</h1>
-<div>
-    <p>OrderView(TemplateView)</p>
-  </div>
+<!DOCTYPE html>
+{%extends "base.html"%}
+{%block title%}
+Корзина товаров
+{%endblock%}
+{%block main%}
+<h1>Корзина товаров</h1>
 
+{{order.dishes.all}}
+</br>
+<table>
+    <thead>
+    <tr>
+        <th> Dish </th>
+        <th align="right"> Count </th>
+        <th> Price </th>
+        <th> Delete </th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for dish in dishes %}
+    <tr>
+
+        <td> {{dish.name}}</td>
+        <td class="number" align="center">
+            <form action="/dishes/" method="post">
+            <input name="dish_id" value="{{dish.id}}" hidden>
+            <input type = 'number' name = "count" value="{{dish.count}}" > <a href="edit/{{dish.id}}" class="submit" > изменить </a> </form> </td>
+        <td class="num"> {{dish.price}} грн.</td>
+        <td><form action="/order/" method="post">
+                 <input name="dish_id" value="{{dish.id}}" hidden>
+                  <a href="/del_dish/{{dish.id}}" class="btn btn-warning btn-sm" role="button"> DELETE </a>
+
+        </form>
+            </td>
+
+   {% endfor %}
+
+    <tr class="total">
+        <td> Total</td>
+         <td class="num">Мой заказ: {{full_price }}  грн. </td>
+    </tbody>
+</table>
+
+{%endblock%}

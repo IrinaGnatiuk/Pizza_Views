@@ -1,10 +1,9 @@
 {%extends "base.html"%}
 {%block main%}
-<h1>DISHES</h1>
+<h1>INSTANCE_DISHES</h1>{% csrf_token %}
 {% block head_title %}Dishes{% endblock %}
-<h3>{{ my_var|lower }}</h3>
+<h1> {% for instance_dish in list_instance_dish %}</h1>
+    <li>{{ instance_dish.name }}  -  цена {{ instance_dish.price }} грн. --- Количество {{ instance_dish.count }}---{{instance_dish.all_price_dish}} </li>
 
-    <a href  = "/dishes/list"> Список блюд</a>
-<strong><em><a href  = "/dishes/new"> ДОБАВИТЬ</a></em></strong>
-
+{%endfor%}
 {%endblock%}
