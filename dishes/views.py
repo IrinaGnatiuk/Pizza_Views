@@ -192,7 +192,7 @@ class AddDelDish(FormView):
         return Dish.objects.all()
 
     def form_valid(self, form):
-        dish = Dish.objects.get(id =form.cleaned_data.get('dish_id'))
+        dish = Dish.objects.get(id=form.cleaned_data.get('dish_id'))
         count = form.cleaned_data.get('count')
         instance_dish = dish.create_instance_dish(count)
         order, created = Order.objects.get_or_create(user=self.request.user)
@@ -210,6 +210,7 @@ class AddDelDish(FormView):
     #     order.get_full_price()
     #     return HttpResponseRedirect("/order")
 
+
 class CountDish(FormView):
     form_class = CountForm
     template_name = 'dishes/dishes_add_form.html'
@@ -217,14 +218,15 @@ class CountDish(FormView):
 
     def form_valid(self, form):
         dish = Dish.objects.get(id =form.cleaned_data.get('dish_id'))
-        print (dish.count)
+        print(dish.count)
         new_count = form.cleaned_data.get('count')
-        print (new_count)
+        print(new_count)
         instance_dish = dish.update(new_count)
-        order= Order.objects.get(user=self.request.user)
+        order = Order.objects.get(user=self.request.user)
         order.dishes.update(instance_dish)
         order.get_full_price()
         return super().form_valid(form)
+
 
 class DishViewSet(viewsets.ModelViewSet):
     queryset = Dish.objects.all()

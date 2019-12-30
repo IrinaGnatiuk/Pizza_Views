@@ -29,8 +29,6 @@ class OrderView(TemplateView):
         return HttpResponseRedirect("/order")
 
 
-
-
 class MakeOrder(FormView):
     model = Order
     template_name = 'order/orders.html'

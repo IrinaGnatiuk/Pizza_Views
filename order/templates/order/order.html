@@ -5,8 +5,11 @@
 {%endblock%}
 {%block main%}
 <h1>Корзина товаров</h1>
+{{order}}
+{%for dish in order.dishes.all%}
+{{dish.name}}--{{dish.price}}грн.
+{%endfor%}
 
-{{order.dishes.all}}
 </br>
 <table>
     <thead>
@@ -39,7 +42,8 @@
 
     <tr class="total">
         <td> Total</td>
-         <td class="num">Мой заказ: {{full_price }}  грн. </td>
+         <td class="num">Мой заказ: {{full_price }}  грн.</td>
+      {{dishes_order}}
     </tbody>
 </table>
 

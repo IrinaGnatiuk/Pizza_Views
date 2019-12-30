@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+{%extends "base.html"%}
+{%block main%}
+<html lang="ru">
+<h1>ORDER </h1>
+<ul>
+    <div>
+             {% for dish in dishes %}
+        <form><input type="text" value={{ dish.name }}> </form>
+        <li>{{ dish.name }}  -  цена {{ dish.price }} грн. </li> <form  action="orders.html" method="post"> <input type="number" min="1" value={{ dish.count }}> шт</form>
+           <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+
+{% endfor %}
+
+            <h1>Мой заказ: {{full_price }}  грн.</h1>
+
+
+</div>
+
+</ul>
+<a href  = "/ingredients"> Ingredient</a>
+<a href  = "/dishes"> Dishes</a>
+<a href  = "/drinks"> Drinks</a>
+<a href  = '/'> Start </a>
+</html>
+
+{% for dish in dishes %}
+<form action="orders.html" method="post">
+   <p><select multiple name="dishes[]">
+    <option value="пицца">{{dish.name}}</option>
+      </select></p>
+   <p><input type="submit" value="Отправить"></p>
+  </form>
+{% endfor %}
+{%endblock%}
+
+
+
+
+
+
+<!DOCTYPE html>
+{%extends "base.html"%}
+{%block title%}
+Корзина товаров
+{%endblock%}
+{%block main%}
+<h1>Корзина товаров</h1>
+<table>
+    <thead>
+    <tr>
+        <th> Dish </th>
+        <th align="right"> Count </th>
+        <th> Price </th>
+        <th> Delete </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for dish in dishes %}
+    <tr>
+        <td> {{dish.name}}</td>
+        <td class="number" align="center">{{dish.count}} </td>
+        <td class="num"> {{dish.price}} грн.</td>
+        <td><form action="/order/" method="post">
+                 <input name="dish_id" value="{{dish.id}}" hidden>
+                  <a href="/del_dish/{{dish.id}}" class="btn btn-warning btn-sm" role="button"> DELETE </a>
+        </form>
+            </td>
+    {% endfor %}
+    <tr class="total">
+        <td> Total</td>
+         <td class="num">Мой заказ: {{full_price }}  грн. </td>
+    </tbody>
+</table>
+
+{%endblock%}
+
+
+
+
