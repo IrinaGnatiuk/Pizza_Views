@@ -1,5 +1,6 @@
 from django.contrib import admin
-from order.models import Order
+from order.models import Order, ShippingOrder
+from dishes.models import InstanceDish
 
 
 class OrderAdmin(admin.ModelAdmin):
@@ -8,5 +9,5 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Order, OrderAdmin)
-
+admin.site.register(ShippingOrder)
 

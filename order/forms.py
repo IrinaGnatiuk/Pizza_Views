@@ -1,6 +1,6 @@
 from django.forms import ModelForm, Form
 from dishes.models import Ingredient, Drink, Dish, SortDish, InstanceDish
-from order.models import Order
+from order.models import Order, ShippingOrder
 from django import forms
 
 
@@ -12,4 +12,11 @@ class OrderForm(ModelForm):
     class Meta:
         model = Order
         fields = ['dishes', 'full_price', 'user']
+
+
+class ShippingOrderForm(ModelForm):
+    class Meta:
+        model = ShippingOrder
+        fields = ['first_name', 'last_name', 'email', 'phone', 'delivery', 'address', 'comment', 'payment_choice']
+
 

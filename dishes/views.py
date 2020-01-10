@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import routers, serializers, viewsets
-from django.views.generic import ListView, View, TemplateView
+from django.views.generic import ListView, View, TemplateView, DetailView
 from django.views.generic.edit import FormView, UpdateView
 from dishes.models import *
 from order.models import Order
@@ -80,6 +80,16 @@ class IngredientView(View):
         return HttpResponse("INGREDIENT(View)!!!")
 
 
+class DishDetailView(DetailView):
+    model = Dish
+    template_name = 'dishes/dish.html'
+
+
+class DrinkDetailView(DetailView):
+    model = Drink
+    template_name = 'dishes/drink.html'
+
+
 class StartView(TemplateView):
     model = Ingredient
     context_object_name = 'ingredient'
@@ -156,8 +166,8 @@ class CreateNewPrice(FormView):
     def form_valid(self, form_class):
         data = form_class.cleaned_data
         change_price = data['change_price']
-        for price in Dish.objects.values_list('price',flat=True):
-            new_price =  price + change_price
+        for price in Dish.objects.values_list('price', flat=True):
+            new_price = price + change_price
             Dish.objects.filter(price=price).update(price=new_price)
         return super().form_valid(form_class)
 
@@ -193,10 +203,20 @@ class AddDelDish(FormView):
 
     def form_valid(self, form):
         dish = Dish.objects.get(id=form.cleaned_data.get('dish_id'))
+        id = form.cleaned_data.get('dish_id')
+        instance_dish = InstanceDish.objects.filter(dish_template=id)
         count = form.cleaned_data.get('count')
-        instance_dish = dish.create_instance_dish(count)
-        order, created = Order.objects.get_or_create(user=self.request.user)
-        order.dishes.add(instance_dish)
+        if instance_dish:
+            instance_dish = InstanceDish.objects.get(dish_template=id)
+            instance_dish.count += count
+            instance_dish.save()
+        else:
+            instance_dish = dish.create_instance_dish(count)
+        if not self.request.user.is_authenticated:
+            order = Order.objects.create(user=None, full_price=0)
+        else:
+            order, created = Order.objects.get_or_create(user=self.request.user)
+            order.dishes.add(instance_dish)
         order.get_full_price()
         return super().form_valid(form)
 

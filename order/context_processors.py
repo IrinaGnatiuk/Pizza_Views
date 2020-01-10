@@ -5,4 +5,6 @@ from django.views.generic import ListView, View, TemplateView, FormView
 
 
 def show_order(request):
-    return {'order': Order.objects.get(user=request.user)}
+    if not request.user.is_authenticated:
+        return {'orders': "ЗАРЕГИСТРИРУЙТЕСЬ!"}
+    return {'orders': Order.objects.get(user=request.user)}

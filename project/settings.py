@@ -72,6 +72,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'order.context_processors.show_order',
+                'dishes.context_processors.all_dish',
+                'dishes.context_processors.dish_img',
+                'dishes.context_processors.drink_img',
             ],
         },
     },
@@ -107,12 +110,13 @@ AUTH_USER_MODEL = 'accounts.User'
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticstorage')
+STATICFILES_DIRS = (
+  os.path.join(BASE_DIR, "static"),
+)
 
-STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, "static"),
-]
+MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media")
+STATIC_ROOT = os.path.join(PROJECT_DIR, "static")
+
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',

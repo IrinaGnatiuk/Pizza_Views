@@ -5,8 +5,8 @@
 {%endblock%}
 {%block main%}
 <h1>Корзина товаров</h1>
-{{order}}
-{%for dish in order.dishes.all%}
+{{orders}}
+{%for dish in orders.dishes.all%}
 {{dish.name}}--{{dish.price}}грн.
 {%endfor%}
 
@@ -22,12 +22,12 @@
     </thead>
     <tbody>
 
-    {% for dish in dishes %}
+    {%for dish in orders.dishes.all%}
     <tr>
 
         <td> {{dish.name}}</td>
         <td class="number" align="center">
-            <form action="/dishes/" method="post">
+            <form action="/order/" method="post">
             <input name="dish_id" value="{{dish.id}}" hidden>
             <input type = 'number' name = "count" value="{{dish.count}}" > <a href="edit/{{dish.id}}" class="submit" > изменить </a> </form> </td>
         <td class="num"> {{dish.price}} грн.</td>
@@ -42,8 +42,8 @@
 
     <tr class="total">
         <td> Total</td>
-         <td class="num">Мой заказ: {{full_price }}  грн.</td>
-      {{dishes_order}}
+         <td class="num">Мой заказ: {{orders.full_price }}  грн.</td>
+
     </tbody>
 </table>
 

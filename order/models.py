@@ -1,6 +1,7 @@
 from django.db import models
 from dishes.models import Dish, Drink, InstanceDish
 from accounts.models import User
+from django.core.validators import RegexValidator
 
 
 class Order(models.Model):
@@ -30,3 +31,24 @@ class Order(models.Model):
         order.remove(dish)
         order.get_full_price()
         return HttpResponseRedirect("/order")
+
+
+class ShippingOrder(models.Model):
+    FILTER_TYPES_payment = (
+        ('cash', 'наличными'),
+        ('card', 'картой'),
+    )
+    FILTER_TYPES_address = (
+        ('not_delivery', 'Самовывоз'),
+        ('delivery', 'Доставка по адресу'),
+    )
+    first_name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=20, blank=True)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=10, validators=[RegexValidator(r'^\d{1,10}$')])
+    delivery = models.CharField(
+        max_length=15, choices=FILTER_TYPES_address, default='Доставка по адресу')
+    address = models.CharField(max_length=200, blank=True)
+    comment = models.TextField(null=True, blank=True, default=None)
+    payment_choice = models.CharField(
+        max_length=15, choices=FILTER_TYPES_payment, default='наличными')

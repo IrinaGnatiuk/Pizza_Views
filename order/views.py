@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.views.generic import ListView, View, TemplateView, FormView
-from order.models import Order
+from order.models import Order, ShippingOrder
 from accounts.models import User
 from dishes.models import InstanceDish
-from order.forms import OrderForm
+from order.forms import OrderForm, ShippingOrderForm
 from django.http import HttpResponseRedirect, HttpResponse
+
 
 class OrderView(TemplateView):
     model = Order
@@ -13,7 +14,10 @@ class OrderView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        order = Order.objects.get(user=self.request.user)
+        if not self.request.user.is_authenticated:
+            order = Order.objects.create(user=None, full_price=0)
+        else:
+            order, created = Order.objects.get_or_create(user=self.request.user)
         context['dishes'] = order.dishes.all()
         context['full_price'] = order.get_full_price
         return context
@@ -32,12 +36,32 @@ class OrderView(TemplateView):
 class MakeOrder(FormView):
     model = Order
     template_name = 'order/orders.html'
-    success_url = '/orders/new'
+    success_url = '/order/'
     form_class = OrderForm
 
     def form_valid(self, form_class):
         Order.objects.create(**form_class.cleaned_data)
         return super().form_valid(form_class)
+
+    def edit_count_dish(self, pk, new_count):
+        order = Order.objects.first()
+        dish = order.dishes.get(id=pk)
+        print(new_count)
+        dish.count = new_count
+        order.get_full_price()
+        return HttpResponseRedirect("/order")
+
+
+class MakeShippingOrderForm(FormView):
+    model = ShippingOrder
+    template_name = 'order/shipping_form.html'
+    success_url = '/'
+    form_class = ShippingOrderForm
+
+    def form_valid(self, form_class):
+        ShippingOrder.objects.create(**form_class.cleaned_data)
+        return super().form_valid(form_class)
+
 
 
 

@@ -23,9 +23,27 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
 
+class DishCategory(models.Model):
+    name = models.CharField(max_length=50, blank=True, null=True, default=None)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return "%s" % self.name
+
+    class Meta:
+        verbose_name = 'Вид еды'
+        verbose_name_plural = 'Виды еды'
+
+
 class Dish(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
     price = models.DecimalField(max_digits=9, decimal_places=2)
+    discount = models.IntegerField(blank=True, null=True, default=0)
+    category = models.ForeignKey(DishCategory, blank=True, null=True, default=None, on_delete=models.SET_NULL)
+    short_description = models.TextField(blank=True, null=True, default=None)
+    description = models.TextField(blank=True, null=True, default=None)
+
     # ingredients = models.ManyToManyField(Ingredient, blank=True)
 
     def __str__(self):
@@ -45,6 +63,10 @@ class Dish(models.Model):
 
 
 class Drink(BaseItem):
+    short_description = models.TextField(blank=True, null=True, default=None)
+    is_active = models.BooleanField(default=True)
+    discount = models.IntegerField(blank=True, null=True, default=0)
+
     def __str__(self):
         return self.name
 
@@ -87,3 +109,31 @@ class InstanceDish(models.Model):
     def all_price_dish(self):
         all_price = self.price * self.count
         return all_price
+
+
+class DishImage(models.Model):
+    dish = models.ForeignKey(Dish, blank=True, null=True, default=None, on_delete=models.SET_NULL)
+    is_main = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    image = models.ImageField(upload_to="dishes_images/")
+
+    def __str__(self):
+        return "%s" % self.id
+
+    class Meta:
+        verbose_name = 'Фотография еды'
+        verbose_name_plural = 'Фотографии еды'
+
+
+class DrinkImage(models.Model):
+    drink = models.ForeignKey(Drink, blank=True, null=True, default=None, on_delete=models.SET_NULL)
+    is_main = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    image = models.ImageField(upload_to="drink_images/")
+
+    def __str__(self):
+        return "%s" % self.id
+
+    class Meta:
+        verbose_name = 'Фотография напитка'
+        verbose_name_plural = 'Фотографии напитков'
