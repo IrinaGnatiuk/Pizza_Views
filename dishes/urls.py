@@ -8,7 +8,7 @@ router.register(r'dishes', DishViewSet)
 
 urlpatterns = [
     path('dishes/', InstanceDishView.as_view()),
-    path('', StartView.as_view(), name='start_page'),
+    # path('', StartView.as_view(), name='start_page'),
     path('ingredients/', IngredientView.as_view()),
     path('drinks/', DrinkView.as_view()),
     path('dishes/list', DishViewList.as_view(), name='list_of_dish'),

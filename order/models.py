@@ -6,8 +6,8 @@ from django.core.validators import RegexValidator
 
 class Order(models.Model):
     dishes = models.ManyToManyField(InstanceDish, blank=True)
-    full_price = models.DecimalField(max_digits=9, decimal_places=2, blank=True)
-    user = models.ForeignKey(User, null=True, max_length=512, on_delete=models.SET_NULL)
+    full_price = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True)
+    user = models.ForeignKey(User, null=True, max_length=512, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = 'заказ'
@@ -25,12 +25,12 @@ class Order(models.Model):
         self.save()
         return full_price
 
-    def del_dish_from_order(self, id):
-        order = Order.objects.get(user=self.request.user)
-        dish = order.dishes.get(id=id)
-        order.remove(dish)
-        order.get_full_price()
-        return HttpResponseRedirect("/order")
+    # def del_dish_from_order(self, id):
+    #     order = Order.objects.get(user=self.request.user)
+    #     dish = order.dishes.get(id=id)
+    #     order.remove(dish)
+    #     order.get_full_price()
+    #     return HttpResponseRedirect("/order")
 
 
 class ShippingOrder(models.Model):

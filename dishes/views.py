@@ -4,9 +4,11 @@ from django.views.generic import ListView, View, TemplateView, DetailView
 from django.views.generic.edit import FormView, UpdateView
 from dishes.models import *
 from order.models import Order
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from .forms import *
 from .serialisers import *
+from dishes.cache import get_client_ip
+from project.celery import add
 
 
 class InstanceDishView(ListView):
@@ -77,6 +79,7 @@ class IngredientView(View):
     template_name = 'dishes/ingredient.html'
 
     def get(self, request, *args, **kwargs):
+        get_client_ip(request)
         return HttpResponse("INGREDIENT(View)!!!")
 
 
@@ -90,10 +93,10 @@ class DrinkDetailView(DetailView):
     template_name = 'dishes/drink.html'
 
 
-class StartView(TemplateView):
-    model = Ingredient
-    context_object_name = 'ingredient'
-    template_name = 'dishes/start.html'
+# class StartView(TemplateView):
+#     # model = Ingredient
+#     # context_object_name = 'ingredient'
+#     template_name = 'home.html'
 
 
 class MakeIngredient(FormView):
@@ -196,6 +199,7 @@ class AddDelDish(FormView):
         context = super().get_context_data(**kwargs)
         context['list_dish'] = Dish.objects.all()
         context['list_instance_dish'] = InstanceDish.objects.all()
+        add.delay(5, 6)
         return context
 
     def get_queryset(self, *args, **kwargs):
@@ -213,7 +217,8 @@ class AddDelDish(FormView):
         else:
             instance_dish = dish.create_instance_dish(count)
         if not self.request.user.is_authenticated:
-            order = Order.objects.create(user=None, full_price=0)
+            order = Order.objects.first()
+            order.dishes.add(instance_dish)
         else:
             order, created = Order.objects.get_or_create(user=self.request.user)
             order.dishes.add(instance_dish)

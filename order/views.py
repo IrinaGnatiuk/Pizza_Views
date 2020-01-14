@@ -7,6 +7,7 @@ from order.forms import OrderForm, ShippingOrderForm
 from django.http import HttpResponseRedirect, HttpResponse
 
 
+
 class OrderView(TemplateView):
     model = Order
     template_name = 'order/order.html'
@@ -15,7 +16,7 @@ class OrderView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if not self.request.user.is_authenticated:
-            order = Order.objects.create(user=None, full_price=0)
+            order = Order.objects.first()
         else:
             order, created = Order.objects.get_or_create(user=self.request.user)
         context['dishes'] = order.dishes.all()
