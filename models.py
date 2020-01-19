@@ -1,140 +1,63 @@
 from django.db import models
+from dishes.models import Dish, Drink, InstanceDish
+from accounts.models import User
+from django.core.validators import RegexValidator
 
 
-class BaseItem(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
-    price = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+class Order(models.Model):
+    dishes = models.ManyToManyField(InstanceDish, blank=True)
+    full_price = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True)
+    user = models.ForeignKey(User, null=True, max_length=512, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
-        abstract = True
-
-
-class Ingredient(models.Model):
-    name = models.CharField(max_length=255)
-    is_vegan = models.BooleanField(default=False)
-    is_meat = models.BooleanField(default=False)
-    price = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+        verbose_name = 'заказ'
+        verbose_name_plural = 'заказы'
 
     def __str__(self):
-        return self.name
+        return 'Order № {}  Total price {}'. format(self.id,  self.full_price)
 
-    class Meta:
-        verbose_name = 'Ингредиент'
-        verbose_name_plural = 'Ингредиенты'
+    def get_full_price(self):
+        dishes = self.dishes.all()
+        full_price = 0
+        for dish in dishes:
+            full_price += dish.price*dish.count
+        self.full_price = full_price
+        self.save()
+        return full_price
 
-
-class DishCategory(models.Model):
-    name = models.CharField(max_length=50, blank=True, null=True, default=None)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return "%s" % self.name
-
-    class Meta:
-        verbose_name = 'Вид еды'
-        verbose_name_plural = 'Виды еды'
-
-
-class Dish(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
-    is_active = models.BooleanField(default=True)
-    price = models.DecimalField(max_digits=9, decimal_places=2)
-    discount = models.IntegerField(blank=True, null=True, default=0)
-    category = models.ForeignKey(DishCategory, blank=True, null=True, default=None, on_delete=models.SET_NULL)
-    short_description = models.TextField(blank=True, null=True, default=None)
-    description = models.TextField(blank=True, null=True, default=None)
-
-    # ingredients = models.ManyToManyField(Ingredient, blank=True)
-
-    def __str__(self):
-        return self.name
-
-    def create_instance_dish(self, count):
-        return InstanceDish.objects.create(
-            name=self.name,
-            price=self.price,
-            dish_template=self,
-            count=count
-        )
+    def get_serialize_order(self):
+        dishes = self.dishes.all()
+        order_dishes = []
+        for dish in dishes:
+            order_dishes.append({
+                "dish_name": dish.name,
+                "dish_price": dish.price,
+                "count": dish.count
+            })
+        return {
+            "order№": self.id,
+            "dishes": order_dishes,
+            "full_price": self.full_price,
+        }
 
 
-    class Meta:
-        verbose_name = 'Блюдо'
-        verbose_name_plural = 'Блюда'
-
-
-class Drink(BaseItem):
-    short_description = models.TextField(blank=True, null=True, default=None)
-    is_active = models.BooleanField(default=True)
-    discount = models.IntegerField(blank=True, null=True, default=0)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Напиток'
-        verbose_name_plural = 'Напитки'
-
-
-class ChangePrice(models.Model):
-    change_price = models.DecimalField(
-        max_digits=9, decimal_places=2, default=0
+class ShippingOrder(models.Model):
+    FILTER_TYPES_payment = (
+        ('cash', 'наличными'),
+        ('card', 'картой'),
     )
-
-
-class SortDish(models.Model):
-    FILTER_TYPES = (
-        ('price', 'price по возрастанию'),
-        ('-price', 'price по убыванию'),
-        ('name', 'name по возрастанию'),
-        ('-name', 'name убыванию'),
+    FILTER_TYPES_address = (
+        ('not_delivery', 'Самовывоз'),
+        ('delivery', 'Доставка по адресу'),
     )
-    sort = models.CharField(
-        max_length=15, choices=FILTER_TYPES, default='price +'
-    )
-
-
-class InstanceDish(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
-    price = models.DecimalField(max_digits=9, decimal_places=2)
-    count = models.PositiveSmallIntegerField(default=1)
-    dish_template = models.ForeignKey(
-        Dish, related_name="dish_templates", blank=True, null=True,
-        on_delete=models.SET_NULL
-    )
-
-    def __str__(self):
-        return 'name: {}, price {},  full_price: {}  '\
-            .format(self.name, str(self.price), str(self.price * self.count))
-
-    def all_price_dish(self):
-        all_price = self.price * self.count
-        return all_price
-
-
-class DishImage(models.Model):
-    dish = models.ForeignKey(Dish, blank=True, null=True, default=None, on_delete=models.SET_NULL)
-    is_main = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    image = models.ImageField(upload_to="dishes_images/")
-
-    def __str__(self):
-        return "%s" % self.id
-
-    class Meta:
-        verbose_name = 'Фотография еды'
-        verbose_name_plural = 'Фотографии еды'
-
-
-class DrinkImage(models.Model):
-    drink = models.ForeignKey(Drink, blank=True, null=True, default=None, on_delete=models.SET_NULL)
-    is_main = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    image = models.ImageField(upload_to="drink_images/")
-
-    def __str__(self):
-        return "%s" % self.id
-
-    class Meta:
-        verbose_name = 'Фотография напитка'
-        verbose_name_plural = 'Фотографии напитков'
+    first_name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=20, blank=True)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=10, validators=[RegexValidator(r'^\d{1,10}$')])
+    delivery = models.CharField(
+        max_length=15, choices=FILTER_TYPES_address, default='Доставка по адресу')
+    address = models.CharField(max_length=200, blank=True)
+    comment = models.TextField(null=True, blank=True, default=None)
+    payment_choice = models.CharField(
+        max_length=15, choices=FILTER_TYPES_payment, default='наличными')
+    order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)

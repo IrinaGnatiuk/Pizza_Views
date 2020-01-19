@@ -27,6 +27,9 @@ urlpatterns = [
     path('dishes/<int:pk>/', DishDetailView.as_view(), name='dish'),
     path('drinks/<int:pk>/', DrinkDetailView.as_view(), name='drink'),
     path('api/', include(router.urls)),
+    path('api/dishes_list/', DishesApiView.as_view(), name='dishes_list_api'),
+    path('api/order/', OrderApiView.as_view(), name='order_api'),
+    path('api/dish/add_to_order/', DishesAddOrderApiView.as_view(), name='dish_add_to_order'),
     # path('api/', include('dishes.urls')),
 
 ]
