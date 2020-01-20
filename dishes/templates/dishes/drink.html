@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+
+<div class="dish-drink-container">
+    <div class="row">
+        <div class="col-lg-6">
+            {% for image_item in drink.drinkimage_set.all %}
+                <img src="{{image_item.image.url}}" class="img-responsive">
+             {%endfor%}
+        </div>
+        <div class="col-lg-6">
+            <h1 class="text-center">
+                {{drink.name}}
+            </h1>
+            <div class="">
+                <p>
+                    Цена:  {{drink.price}}
+                </p>
+            </div>
+            <div class="">
+                {{drink.short_description}}
+            </div>
+            <br/>
+         <br/>
+             <div>
+                 <form id="form_dish" method="POST"  class="form-inline" class="post-form" action = "/dishes/add/">{% csrf_token %}
+                     <div class="form-group">
+                         <input type="text"  value = {{drink.id}} hidden name = "drink_id">
+                         <label for="number">Количество</label>
+                         <input type="number"  name = "count" class="form-control">
+                     </div>
+                     <div class="form-group">
+        <button type="submit" class="btn btn-success">
+            Добавить в корзину
+        </button>
+                         </div>
+        </form>
+             </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

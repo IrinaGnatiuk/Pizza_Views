@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+                <div class="col-lg-3">
+                    <div class="drink-item">
+                        <div>
+                            <a href="{%url 'drink' image.drink.id %}">
+                            <img src="{{image.image.url}}" class="img-responsive">
+                            </a>
+                        </div>
+                        {% if image.drink.discount %}
+                        <div class="discount-container">
+                            <span>-{{image.drink.discount}} %</span>
+                        </div>
+                        {%endif%}
+                        <h4>{{image.drink.name}}</h4>
+                        <p>
+                            {{image.drink.short_description}}
+                        </p>
+                        <div>
+                            {{image.drink.price}}  грн.
+                        </div>
+                        <div class="add-to-cart-btn">
+                            <button class="btn btn-success">
+                                Добавить в корзину
+                            </button>
+                        </div>
+                    </div>
+                </div>
+</body>
+</html>
