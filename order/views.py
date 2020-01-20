@@ -3,14 +3,13 @@ from django.views.generic import ListView, View, TemplateView, FormView
 from order.models import Order, ShippingOrder
 from accounts.models import User
 from dishes.models import InstanceDish
-from order.forms import OrderForm, ShippingOrderForm
+from order.forms import OrderForm, ShippingOrderForm, EditCountDish
 from django.http import HttpResponseRedirect, HttpResponse
-
 
 
 class OrderView(TemplateView):
     model = Order
-    template_name = 'order/order.html'
+    template_name = "order/order.html"
     context_object_name = 'orders'
 
     def get_context_data(self, **kwargs):
@@ -19,8 +18,6 @@ class OrderView(TemplateView):
             order = Order.objects.first()
         else:
             order, created = Order.objects.get_or_create(user=self.request.user)
-        context['dishes'] = order.dishes.all()
-        context['full_price'] = order.get_full_price
         return context
 
     def get_queryset(self):
@@ -34,23 +31,56 @@ class OrderView(TemplateView):
         return HttpResponseRedirect("/order")
 
 
-class MakeOrder(FormView):
-    model = Order
-    template_name = 'order/orders.html'
-    success_url = '/order/'
-    form_class = OrderForm
+class EditCountDish(FormView):
+    template_name = 'order/order.html'
+    form_class = EditCountDish
+    success_url = "/order"
+
+    def get_queryset(self, *args, **kwargs):
+        return Order.objects.all()
 
     def form_valid(self, form_class):
-        Order.objects.create(**form_class.cleaned_data)
+        data = form_class.cleaned_data
+        new_count = data['new_count']
+        print(new_count)
+        dish_id = data['dish_id']
+        print(dish_id)
+        order = Order.objects.first()
+        dish = order.dishes.get(id=dish_id)
+        print(dish.count)
+        dish.count = new_count
+        dish.save()
+        order.get_full_price()
+        # return HttpResponseRedirect("/order")
         return super().form_valid(form_class)
 
-    def edit_count_dish(self, pk, new_count):
-        order = Order.objects.first()
-        dish = order.dishes.get(id=pk)
-        print(new_count)
-        dish.count = new_count
-        order.get_full_price()
-        return HttpResponseRedirect("/order")
+    def form_invalid(self, form_class):
+        print("Some problems")
+        return super().form_invalid(form_class)
+
+        # for price in Dish.objects.values_list('price', flat=True):
+        #     new_price = price + change_price
+        #     Dish.objects.filter(price=price).update(price=new_price)
+        # return super().form_valid(form_class)
+
+
+# class MakeOrder(FormView):
+#     model = Order
+#     template_name = 'order/orders.html'
+#     success_url = '/order/'
+#     form_class = OrderForm
+#
+#     def form_valid(self, form_class):
+#         Order.objects.create(**form_class.cleaned_data)
+#         return super().form_valid(form_class)
+#
+#     def edit_count_dish(self, pk, new_count):
+#         order = Order.objects.first()
+#         dish = order.dishes.get(id=pk)
+#         print(new_count)
+#         dish.count = new_count
+#         order.get_full_price()
+#         return HttpResponseRedirect("/order")
 
 
 class MakeShippingOrderForm(FormView):

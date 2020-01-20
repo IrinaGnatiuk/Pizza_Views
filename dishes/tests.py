@@ -1,3 +1,4 @@
+
 from django.test import Client, TestCase
 from django.urls import resolve, reverse
 from .models import Dish
@@ -71,7 +72,3 @@ class TestDish(TestCase):
         self.assertEquals(url, '/dishes/99/edit/')
         response = self.client.get(url)
         self.assertEquals(response.status_code, 404)
-
-
-
-

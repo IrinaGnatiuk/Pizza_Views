@@ -15,6 +15,8 @@ urlpatterns = [
     path('', include('core.urls')),
     path('', include('dishes.urls')),
     path('', include('order.urls')),
+    path('', include('accounts.urls')),
+
 ]
 
 if settings.DEBUG:

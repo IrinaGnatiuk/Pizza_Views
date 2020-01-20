@@ -17,6 +17,11 @@ class OrderForm(ModelForm):
 class ShippingOrderForm(ModelForm):
     class Meta:
         model = ShippingOrder
-        fields = ['first_name', 'last_name', 'email', 'phone', 'delivery', 'address', 'comment', 'payment_choice']
+        fields = ['first_name', 'last_name', 'email', 'phone', 'delivery', 'address', 'comment', 'payment_choice', 'order']
+
+
+class EditCountDish(Form):
+    new_count = forms.IntegerField()
+
 
 

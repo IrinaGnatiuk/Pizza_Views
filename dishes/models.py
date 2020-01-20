@@ -57,6 +57,14 @@ class Dish(models.Model):
             count=count
         )
 
+    def get_serialize_dishes(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "price": self.price,
+            "description": self.description,
+        }
+
     class Meta:
         verbose_name = 'Блюдо'
         verbose_name_plural = 'Блюда'

@@ -25,12 +25,20 @@ class Order(models.Model):
         self.save()
         return full_price
 
-    # def del_dish_from_order(self, id):
-    #     order = Order.objects.get(user=self.request.user)
-    #     dish = order.dishes.get(id=id)
-    #     order.remove(dish)
-    #     order.get_full_price()
-    #     return HttpResponseRedirect("/order")
+    def get_serialize_order(self):
+        dishes = self.dishes.all()
+        order_dishes = []
+        for dish in dishes:
+            order_dishes.append({
+                "dish_name": dish.name,
+                "dish_price": dish.price,
+                "count": dish.count
+            })
+        return {
+            "order№": self.id,
+            "dishes": order_dishes,
+            "full_price": self.full_price,
+        }
 
 
 class ShippingOrder(models.Model):
@@ -52,3 +60,4 @@ class ShippingOrder(models.Model):
     comment = models.TextField(null=True, blank=True, default=None)
     payment_choice = models.CharField(
         max_length=15, choices=FILTER_TYPES_payment, default='наличными')
+    order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)

@@ -3,6 +3,7 @@
 from .views import *
 from django.conf.urls import url, include
 from django.views.generic import TemplateView
+from .views_api import UsersApiView,CreateUsersApiView
 
 urlpatterns = [
     url(r'^login/$', EmailLoginView.as_view(), name="email-login"),
@@ -13,4 +14,6 @@ urlpatterns = [
     url(r'^registration/$', RegistrationView.as_view(), name="registration-url"),
     url(r'^logout/$', LogoutView.as_view(), name="logout-view"),
     url(r'^switch_user/$', SwitchUser.as_view(), name="switch-user-url"),
+    url(r'^api/get_users/$', UsersApiView.as_view(), name="get_users"),
+    url(r'^api/create_test_user/$', CreateUsersApiView.as_view(), name="create_test_user"),
 ]

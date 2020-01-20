@@ -190,7 +190,7 @@ class MakeSort(FormView):
         return super().form_valid(form_class)
 
 
-class AddDelDish(FormView):
+class AddDish(FormView):
     form_class = AddDishForm
     template_name = 'dishes/dishes_add_form.html'
     success_url = '/order/'
@@ -199,7 +199,7 @@ class AddDelDish(FormView):
         context = super().get_context_data(**kwargs)
         context['list_dish'] = Dish.objects.all()
         context['list_instance_dish'] = InstanceDish.objects.all()
-        add.delay(5, 6)
+        # add.delay(5, 6)
         return context
 
     def get_queryset(self, *args, **kwargs):
@@ -222,33 +222,6 @@ class AddDelDish(FormView):
         else:
             order, created = Order.objects.get_or_create(user=self.request.user)
             order.dishes.add(instance_dish)
-        order.get_full_price()
-        return super().form_valid(form)
-
-    # def edit_count_dish_in_order(request,pk):
-    #     order = Order.objects.first()
-    #     dish = order.dishes.get(id =pk)
-    #     print(dish.count)
-    #     print(request.POST.get('count'))
-    #     # dish.count = count
-    #     print ("{}".format(dish.count))
-    #     order.get_full_price()
-    #     return HttpResponseRedirect("/order")
-
-
-class CountDish(FormView):
-    form_class = CountForm
-    template_name = 'dishes/dishes_add_form.html'
-    success_url = '/order/'
-
-    def form_valid(self, form):
-        dish = Dish.objects.get(id =form.cleaned_data.get('dish_id'))
-        print(dish.count)
-        new_count = form.cleaned_data.get('count')
-        print(new_count)
-        instance_dish = dish.update(new_count)
-        order = Order.objects.get(user=self.request.user)
-        order.dishes.update(instance_dish)
         order.get_full_price()
         return super().form_valid(form)
 
