@@ -46,30 +46,34 @@ class OrderApiView(View):
 
 class DishesAddOrderApiView(View):
 
-     def get(self, request):
-      return JsonResponse({'message': "method GET not supported. Please use POST"})
+    def get(self, request):
+        return JsonResponse(
+            {'message': "method GET not supported. Please use POST"}
+        )
 
-     def post(self, request, *args, **kwargs):
-         dish = Dish.objects.get(id=request.POST.get('id'))
-         name = dish.name
-         count = int(request.POST.get('count'))
-         id=request.POST.get('id')
-         instance_dish = InstanceDish.objects.filter(dish_template=id)
-         if instance_dish:
-             instance_dish = InstanceDish.objects.get(dish_template=id)
-             instance_dish.count += count
-             instance_dish.save()
-         else:
-             instance_dish = dish.create_instance_dish(count)
-         if not self.request.user.is_authenticated:
-             order = Order.objects.first()
-             order.dishes.add(instance_dish)
-         else:
-             order, created = Order.objects.get_or_create(user=self.request.user)
-             order.dishes.add(instance_dish)
-         order.get_full_price()
-         serialize_order = order.get_serialize_order()
-         return JsonResponse({'order update': serialize_order,
-                              'добавлено блюдо': name,
-                              "в количестве": count,})
-
+    def post(self, request, *args, **kwargs):
+        dish = Dish.objects.get(id=request.POST.get('id'))
+        name = dish.name
+        count = int(request.POST.get('count'))
+        id = request.POST.get('id')
+        instance_dish = InstanceDish.objects.filter(dish_template=id)
+        if instance_dish:
+            instance_dish = InstanceDish.objects.get(dish_template=id)
+            instance_dish.count += count
+            instance_dish.save()
+        else:
+            instance_dish = dish.create_instance_dish(count)
+        if not self.request.user.is_authenticated:
+            order = Order.objects.first()
+            order.dishes.add(instance_dish)
+        else:
+            order, created = \
+                Order.objects.get_or_create(user=self.request.user)
+            order.dishes.add(instance_dish)
+        order.get_full_price()
+        serialize_order = order.get_serialize_order()
+        return JsonResponse(
+            {'order update': serialize_order,
+             'добавлено блюдо': name,
+             "в количестве": count}
+        )

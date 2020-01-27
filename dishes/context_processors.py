@@ -8,7 +8,11 @@ def all_dish(request):
 
 
 def dish_img(request):
-    dishes_img = DishImage.objects.filter(is_active=True, is_main=True, dish__is_active=True)
+    dishes_img = DishImage.objects.filter(
+        is_active=True,
+        is_main=True,
+        dish__is_active=True
+    )
     dishes_img_sushi = dishes_img.filter(dish__category__id=1)
     dishes_img_pizza = dishes_img.filter(dish__category__id=2)
     return {'dishes_img': dishes_img,
@@ -18,6 +22,9 @@ def dish_img(request):
 
 
 def drink_img(request):
-    drinks_img = DrinkImage.objects.filter(is_active=True, is_main=True, drink__is_active=True)
+    drinks_img = DrinkImage.objects.filter(
+        is_active=True,
+        is_main=True,
+        drink__is_active=True
+    )
     return {'drinks_img': drinks_img}
-

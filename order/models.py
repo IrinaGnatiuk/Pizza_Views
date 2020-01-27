@@ -6,8 +6,15 @@ from django.core.validators import RegexValidator
 
 class Order(models.Model):
     dishes = models.ManyToManyField(InstanceDish, blank=True)
-    full_price = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True)
-    user = models.ForeignKey(User, null=True, max_length=512, blank=True, on_delete=models.SET_NULL)
+    full_price = models.DecimalField(
+        max_digits=9, decimal_places=2,
+        blank=True, null=True
+    )
+    user = models.ForeignKey(
+        User, null=True,
+        max_length=512, blank=True,
+        on_delete=models.SET_NULL
+    )
 
     class Meta:
         verbose_name = 'заказ'
@@ -53,9 +60,14 @@ class ShippingOrder(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
-    phone = models.CharField(max_length=10, validators=[RegexValidator(r'^\d{1,10}$')])
+    phone = models.CharField(
+        max_length=10,
+        validators=[RegexValidator(r'^\d{1,10}$')]
+    )
     delivery = models.CharField(
-        max_length=15, choices=FILTER_TYPES_address, default='Доставка по адресу')
+        max_length=15,
+        choices=FILTER_TYPES_address, default='Доставка по адресу'
+    )
     address = models.CharField(max_length=200, blank=True)
     comment = models.TextField(null=True, blank=True, default=None)
     payment_choice = models.CharField(

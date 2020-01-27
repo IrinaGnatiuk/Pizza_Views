@@ -40,7 +40,11 @@ class Dish(models.Model):
     is_active = models.BooleanField(default=True)
     price = models.DecimalField(max_digits=9, decimal_places=2)
     discount = models.IntegerField(blank=True, null=True, default=0)
-    category = models.ForeignKey(DishCategory, blank=True, null=True, default=None, on_delete=models.SET_NULL)
+    category = models.ForeignKey(
+        DishCategory,
+        blank=True, null=True,
+        default=None, on_delete=models.SET_NULL
+    )
     short_description = models.TextField(blank=True, null=True, default=None)
     description = models.TextField(blank=True, null=True, default=None)
 
@@ -120,7 +124,11 @@ class InstanceDish(models.Model):
 
 
 class DishImage(models.Model):
-    dish = models.ForeignKey(Dish, blank=True, null=True, default=None, on_delete=models.SET_NULL)
+    dish = models.ForeignKey(
+        Dish,
+        blank=True, null=True,
+        default=None, on_delete=models.SET_NULL
+    )
     is_main = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     image = models.ImageField(upload_to="dishes_images/")
@@ -134,7 +142,11 @@ class DishImage(models.Model):
 
 
 class DrinkImage(models.Model):
-    drink = models.ForeignKey(Drink, blank=True, null=True, default=None, on_delete=models.SET_NULL)
+    drink = models.ForeignKey(
+        Drink,
+        blank=True, null=True,
+        default=None, on_delete=models.SET_NULL
+    )
     is_main = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     image = models.ImageField(upload_to="drink_images/")

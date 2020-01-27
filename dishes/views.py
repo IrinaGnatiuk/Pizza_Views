@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from rest_framework import routers, serializers, viewsets
+from rest_framework import routers, serializers, viewsets, mixins
+from rest_framework.generics import GenericAPIView, ListAPIView
 from django.views.generic import ListView, View, TemplateView, DetailView
 from django.views.generic.edit import FormView, UpdateView
 from dishes.models import *
@@ -52,8 +53,9 @@ class DishViewList(ListView):
         context['my_var'] = 'DishesListView'
         context['count_dish'] = Dish.objects.count()
         context['list_dish1'] = Dish.objects.values('price').order_by('price')
-        context['list_dish2'] = Dish.objects.values_list('name', flat=True).order_by('price')
-        context['filter200'] = Dish.objects.filter(price__gt = 200)
+        context['list_dish2'] =\
+            Dish.objects.values_list('name', flat=True).order_by('price')
+        context['filter200'] = Dish.objects.filter(price__gt=200)
         context['filter50'] = Dish.objects.filter(price__gt=50)
         return context
 
@@ -199,7 +201,7 @@ class AddDish(FormView):
         context = super().get_context_data(**kwargs)
         context['list_dish'] = Dish.objects.all()
         context['list_instance_dish'] = InstanceDish.objects.all()
-        # add.delay(5, 6)
+        add.delay(5, 10)
         return context
 
     def get_queryset(self, *args, **kwargs):
@@ -220,7 +222,8 @@ class AddDish(FormView):
             order = Order.objects.first()
             order.dishes.add(instance_dish)
         else:
-            order, created = Order.objects.get_or_create(user=self.request.user)
+            order, created =\
+                Order.objects.get_or_create(user=self.request.user)
             order.dishes.add(instance_dish)
         order.get_full_price()
         return super().form_valid(form)
@@ -230,8 +233,51 @@ class DishViewSet(viewsets.ModelViewSet):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
 
+    # def get_queryset(self):
+    #     # queryset = Dish.objects.all()
+    #     name = self.kwargs['name']
+    #     # name = self.request.query_params.get('name', None)
+    #     # if name is not None:
+    #     #     queryset = queryset.filter(name=name)
+    #     return Dish.objects.filter(dish_name=name)
 
 
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    # def get(self, request, *args, **kwargs):
+    #     return self.list(request, *args, **kwargs)
+    #
+    # def perform_create(self, serializer):
+    #     dish = Dish.objects.get(Dish, id=self.request.data.get('id'))
+    #     count = int(self.request.data.get('count'))
+    #     return serializer.save(dish=dish, count=count)
+    #
+    # def post(self, request, *args, **kwargs):
+    #     return self.create(request, *args, **kwargs)
 
 
+# class DishApiList(ListAPIView):
+#     serializer_class = DishSerializer
+#
+#     def get_queryset(self):
+#         queryset = Dish.objects.all()
+#         name = self.kwargs['name']
+#         # name = self.request.query_params.get('name', None)
+#         # if name is not None:
+#         #     queryset = queryset.filter(name=name)
+#         return queryset.filter(name=name)
+#         # return queryset
 
+# class DishApiList(ListAPIView):
+#     serializer_class = DishSerializer
+#
+#     def get_queryset(self):
+#         # queryset = Dish.objects.all()
+#         name = self.kwargs['name']
+#         # name = self.request.query_params.get('name', None)
+#         # if name is not None:
+#         #     queryset = queryset.filter(name=name)
+#         return Dish.objects.filter(dish_name=name)
+#         # return queryset

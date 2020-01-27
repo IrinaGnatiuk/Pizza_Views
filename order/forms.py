@@ -7,7 +7,10 @@ from django import forms
 class OrderForm(ModelForm):
     instance_dish = forms.CharField(max_length=250)
     user = forms.CharField(max_length=250)
-    full_price = forms.DecimalField(required=True, max_digits=2, decimal_places=9)
+    full_price = forms.DecimalField(
+        required=True, max_digits=2,
+        decimal_places=9
+    )
 
     class Meta:
         model = Order
@@ -17,11 +20,14 @@ class OrderForm(ModelForm):
 class ShippingOrderForm(ModelForm):
     class Meta:
         model = ShippingOrder
-        fields = ['first_name', 'last_name', 'email', 'phone', 'delivery', 'address', 'comment', 'payment_choice', 'order']
+        fields = [
+            'first_name', 'last_name',
+            'email', 'phone',
+            'delivery', 'address',
+            'comment', 'payment_choice',
+            'order'
+        ]
 
 
 class EditCountDish(Form):
     new_count = forms.IntegerField()
-
-
-
