@@ -1,11 +1,16 @@
 from django.conf.urls import url, include
 from django.urls import path
 from .views import *
-from  .views_api import *
+from .views_api import *
 from rest_framework import routers, serializers, viewsets
 
 router = routers.DefaultRouter()
 router.register(r'dishes', DishViewSet)
+# router.register(r'dishes(?P<name>a-z0-9+)/?$',
+# DishViewSet.as_view().get_queryset, basename="Filter")
+router.register(r'order', OrderViewSet)
+# router.register(r'^dishes/(?P<name>.+)/$',
+# DishApiList.get_queryset(), basename="125")
 
 urlpatterns = [
     path('dishes/', InstanceDishView.as_view()),
@@ -26,10 +31,14 @@ urlpatterns = [
     path('dishes/<int:pk>/edit/', UpdateDish.as_view(), name='update_dish'),
     path('dishes/<int:pk>/', DishDetailView.as_view(), name='dish'),
     path('drinks/<int:pk>/', DrinkDetailView.as_view(), name='drink'),
-    path('api/', include(router.urls)),
+    path('rest_api/', include(router.urls)),
     path('api/dishes_list/', DishesApiView.as_view(), name='dishes_list_api'),
     path('api/order/', OrderApiView.as_view(), name='order_api'),
-    path('api/dish/add_to_order/', DishesAddOrderApiView.as_view(), name='dish_add_to_order'),
+    path('api/dish/add_to_order/',
+         DishesAddOrderApiView.as_view(), name='dish_add_to_order'),
     # path('api/', include('dishes.urls')),
-
+    # path('rest_api/ ^dishes/(?P<name>a-z0-9+)/?$',
+    # DishApiList.as_view(), name='dish_filter'),
+    # path('api/dishes/(?P<name>.+)/$',
+    # DishApiList.as_view(), name='dish_api_list')
 ]

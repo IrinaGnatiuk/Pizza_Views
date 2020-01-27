@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from django.views.decorators.cache import cache_page
 from project.views import HomeView
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', TemplateView.as_view(template_name="index.html")),
@@ -16,7 +17,6 @@ urlpatterns = [
     path('', include('dishes.urls')),
     path('', include('order.urls')),
     path('', include('accounts.urls')),
-
 ]
 
 if settings.DEBUG:

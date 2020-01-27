@@ -1,5 +1,6 @@
 from django.contrib import admin
-from dishes.models import Dish, Drink,  Ingredient, InstanceDish, DishImage, DishCategory, DrinkImage
+from dishes.models import Dish, Drink,  Ingredient, InstanceDish, DishImage, \
+    DishCategory, DrinkImage
 
 
 class DishCategoryAdmin(admin.ModelAdmin):
@@ -11,12 +12,14 @@ class DishCategoryAdmin(admin.ModelAdmin):
 
 class DishImageInline(admin.TabularInline):
     model = DishImage
-    extra = 0  #количество дополнительных полей с возможностью добавления картинок по умолчанию в админке блюда
+    extra = 0
+# количество дополнительных полей с возможностью добавления картинок
+# по умолчанию в админке блюда
 
 
 class DrinkImageInline(admin.TabularInline):
     model = DrinkImage
-    extra = 0  #количество дополнительных полей с возможностью добавления картинок по умолчанию в админке блюда
+    extra = 0
 
 
 class DishAdmin(admin.ModelAdmin):
@@ -56,7 +59,3 @@ admin.site.register(Drink, DrinkAdmin)
 admin.site.register(DrinkImage, DrinkImageAdmin)
 admin.site.register(Ingredient)
 admin.site.register(InstanceDish)
-
-
-
-# Register your models here.

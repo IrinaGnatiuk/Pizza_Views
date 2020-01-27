@@ -17,7 +17,8 @@ class OrderView(TemplateView):
         if not self.request.user.is_authenticated:
             order = Order.objects.first()
         else:
-            order, created = Order.objects.get_or_create(user=self.request.user)
+            order, created = \
+                Order.objects.get_or_create(user=self.request.user)
         return context
 
     def get_queryset(self):
@@ -92,11 +93,3 @@ class MakeShippingOrderForm(FormView):
     def form_valid(self, form_class):
         ShippingOrder.objects.create(**form_class.cleaned_data)
         return super().form_valid(form_class)
-
-
-
-
-
-
-
-

@@ -3,6 +3,10 @@ import os
 from celery import Celery
 from django.conf import settings
 from celery.decorators import task
+# from dishes.models import Dish, InstanceDish
+# from dishes.views import AddDish
+# from order.models import Order
+# from django.views.generic.edit import FormView
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 app = Celery('project')

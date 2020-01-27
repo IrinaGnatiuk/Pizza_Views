@@ -13,7 +13,3 @@ class TestShippingForm(TestCase):
         self.assertEquals(url, '/order/shipping_form')
         response = self.client.get(url)
         self.assertEquals(response.status_code, 200)
-
-
-
-
